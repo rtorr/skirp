@@ -1,6 +1,6 @@
 {
   "name": "skirp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "run package scripts in current directory",
   "main": "index.mjs",
   "bin": "index.mjs",
@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "inquirer": "^9.1.5"
+    "inquirer": "^9.1.5",
+    "string-argv": "^0.3.1"
   }
 }
