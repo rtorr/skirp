@@ -1,6 +1,6 @@
 {
   "name": "skirp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "run package scripts in current directory",
   "main": "index.mjs",
   "bin": "index.mjs",
