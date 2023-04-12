@@ -1,6 +1,6 @@
 {
   "name": "skirp",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "run package scripts in current directory",
   "main": "index.mjs",
   "bin": "index.mjs",
@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "inquirer": "^9.1.5",
+    "ora": "^6.3.0",
     "string-argv": "^0.3.1"
   }
 }

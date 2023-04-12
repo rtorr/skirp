@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { parseArgsStringToArgv } from "string-argv";
+import ora from "ora";
 
 const workingDirectory = process.cwd();
 
@@ -40,6 +41,8 @@ function callback(err, _data) {
       },
     ])
     .then((answers) => {
+      ora().start();
+
       let args = parseArgsStringToArgv(`npm run ${answers.script}`);
       let cmd = args.shift();
 
