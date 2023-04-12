@@ -41,7 +41,7 @@ function callback(err, _data) {
       },
     ])
     .then((answers) => {
-      ora().start();
+      const spinner = ora().start();
 
       let args = parseArgsStringToArgv(`npm run ${answers.script}`);
       let cmd = args.shift();
@@ -50,5 +50,9 @@ function callback(err, _data) {
 
       step.stdout.pipe(process.stdout);
       step.stderr.pipe(process.stderr);
+
+      step.on("close", () => {
+        spinner.stop();
+      });
     });
 }
