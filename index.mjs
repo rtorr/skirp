@@ -2,16 +2,17 @@
 
 import inquirer from "inquirer";
 import fs from "node:fs";
-import path, { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { exec } from "node:child_process";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-fs.readFile(path.resolve(__dirname, "package.json"), "UTF-8", callback);
+const __dirname = process.cwd();
+
+console.log(__dirname);
+fs.readFile(path.resolve(process.cwd(), "package.json"), "UTF-8", callback);
 
 function callback(err, _data) {
   if (err) {
-    console.error("There is no package.json at " + __dirname);
+    return console.error("There is no package.json at " + __dirname);
   }
 
   let data;
@@ -24,7 +25,7 @@ function callback(err, _data) {
 
   const scripts = data.scripts;
   if (!scripts) {
-    throw new Error(`package.json at path ${__dirname} has no scripts`);
+    return new Error(`package.json at path ${__dirname} has no scripts`);
   }
 
   const keys = Object.keys(scripts);
