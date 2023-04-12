@@ -15,7 +15,7 @@ async function run(command) {
     let args = parseArgsStringToArgv(command);
     let cmd = args.shift();
 
-    let step = spawn(cmd, args);
+    let step = spawn(cmd, args, { cwd: process.cwd() });
 
     step.stdout.pipe(process.stdout);
     step.stderr.pipe(process.stderr);
@@ -56,6 +56,6 @@ function callback(err, _data) {
       },
     ])
     .then((answers) => {
-      run(scripts[answers.script]);
+      run(`npm run ${answers.script}`);
     });
 }

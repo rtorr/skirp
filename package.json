@@ -1,15 +1,22 @@
 {
   "name": "skirp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "run package scripts in current directory",
   "main": "index.mjs",
   "bin": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "index.mjs"
+  ],
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "Richard Torruellas",
+    "email": "me@rtorr.com",
+    "url": "https://rtorr.com"
+  },
+  "license": "MIT",
   "dependencies": {
     "inquirer": "^9.1.5",
     "string-argv": "^0.3.1"
