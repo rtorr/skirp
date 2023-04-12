@@ -1,0 +1,16 @@
+{
+  "name": "skirp",
+  "version": "1.0.0",
+  "description": "run package scripts in current directory",
+  "main": "index.mjs",
+  "bin": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^9.1.5"
+  }
+}
