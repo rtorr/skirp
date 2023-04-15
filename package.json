@@ -5,6 +5,7 @@
   "main": "index.mjs",
   "bin": "index.mjs",
   "scripts": {
+    "postinstall": "patch-package",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
@@ -21,7 +22,9 @@
     "@npmcli/map-workspaces": "^3.0.3",
     "has-yarn": "^3.0.0",
     "inquirer": "^9.1.5",
+    "inquirer-search-list": "^1.2.6",
     "ora": "^6.3.0",
+    "patch-package": "^6.5.1",
     "string-argv": "^0.3.1"
   }
 }
