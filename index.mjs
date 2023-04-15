@@ -8,9 +8,7 @@ import { parseArgsStringToArgv } from "string-argv";
 import ora from "ora";
 import hasYarn from "has-yarn";
 import mapWorkspaces from "@npmcli/map-workspaces";
-import searchList from "inquirer-search-list";
 
-inquirer.registerPrompt("search-list", searchList);
 const fsPromises = fs.promises;
 const workingDirectory = process.cwd();
 
@@ -39,7 +37,6 @@ function getScripts(pkg, key, value) {
         return {
           name: `${key} : ${script}`,
           value: {
-            key,
             cwd: value,
             script,
           },
@@ -74,18 +71,17 @@ async function getEeverything() {
   const choices = await getEeverything();
   const answers = await inquirer.prompt([
     {
-      type: "search-list",
+      type: "list",
       name: "script",
       message: "Choose a script to run",
       choices: choices,
     },
   ]);
-  console.log(answers);
   const spinner = ora().start();
   const runner = hasYarn(workingDirectory) ? "yarn" : "npm";
   let args = parseArgsStringToArgv(`${runner} run ${answers.script.script}`);
   let cmd = args.shift();
-  let step = spawn(cmd, args, { cwd: answers.script.cwd });
+  let step = spawn(cmd, args, { cwd: answers.cwd });
   step.stdout.pipe(process.stdout);
   step.stderr.pipe(process.stderr);
   step.on("close", () => {
