@@ -1,58 +1,96 @@
 #!/usr/bin/env node
 
-import inquirer from "inquirer";
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import inquirer from "inquirer";
 import { parseArgsStringToArgv } from "string-argv";
 import ora from "ora";
+import hasYarn from "has-yarn";
+import mapWorkspaces from "@npmcli/map-workspaces";
 
+const fsPromises = fs.promises;
 const workingDirectory = process.cwd();
 
-fs.readFile(path.resolve(process.cwd(), "package.json"), "UTF-8", callback);
-
-function callback(err, _data) {
-  if (err) {
-    return console.error("There is no package.json at " + workingDirectory);
-  }
-
-  let data;
-
+async function getPackageJson(cwd) {
+  let packageJson;
   try {
-    data = JSON.parse(_data);
+    packageJson = await fsPromises.readFile(
+      path.resolve(cwd, "package.json"),
+      "UTF-8"
+    );
+  } catch (e) {
+    console.error("There is no package.json at " + workingDirectory);
+  }
+  let data;
+  try {
+    data = JSON.parse(packageJson);
   } catch (e) {
     console.error(`The package.json at ${workingDirectory} has invalid json`);
   }
+  return data;
+}
 
-  const scripts = data.scripts;
-  if (!scripts) {
-    return new Error(`package.json at path ${workingDirectory} has no scripts`);
-  }
+function getScripts(pkg, key, value) {
+  const children = pkg.scripts
+    ? Object.keys(pkg.scripts).map((script) => {
+        return {
+          name: `${key} : ${script}`,
+          value: {
+            cwd: value,
+            script,
+          },
+        };
+      })
+    : [];
+  return children;
+}
 
-  const keys = Object.keys(scripts);
+async function getEeverything() {
+  const pkg = await getPackageJson(process.cwd());
+  let workspacePaths = await mapWorkspaces({
+    cwd: process.cwd(),
+    pkg,
+  });
+  let rootName = pkg.name ? pkg.name : "root";
+  let workspacesScripts = [];
+  workspacePaths.forEach((value, key) => {
+    workspacesScripts.push(
+      (async function childScript() {
+        const pkg = await getPackageJson(value);
+        return getScripts(pkg, key, value);
+      })()
+    );
+  });
+  workspacesScripts = await Promise.all(workspacesScripts);
+  const rv = getScripts(pkg, rootName, process.cwd());
+  return [...rv, ...workspacesScripts].flat();
+}
 
+async function run() {
+  const choices = await getEeverything();
   inquirer
     .prompt([
       {
         type: "list",
         name: "script",
         message: "Choose a script to run",
-        choices: keys,
+        choices: choices,
       },
     ])
     .then((answers) => {
       const spinner = ora().start();
-
-      let args = parseArgsStringToArgv(`npm run ${answers.script}`);
+      const runner = hasYarn(workingDirectory) ? "yarn" : "npm";
+      let args = parseArgsStringToArgv(
+        `${runner} run ${answers.script.script}`
+      );
       let cmd = args.shift();
-
-      let step = spawn(cmd, args, { cwd: workingDirectory });
-
+      let step = spawn(cmd, args, { cwd: answers.cwd });
       step.stdout.pipe(process.stdout);
       step.stderr.pipe(process.stderr);
-
       step.on("close", () => {
         spinner.stop();
       });
     });
 }
+run();
